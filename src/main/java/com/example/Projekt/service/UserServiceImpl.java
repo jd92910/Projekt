@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-/**
- * Implementacja serwisu. Metody krótkie, pojedyncza odpowiedzialność każdej.
- */
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
