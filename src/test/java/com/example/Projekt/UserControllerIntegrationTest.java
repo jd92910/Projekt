@@ -46,22 +46,58 @@ class UserControllerIntegrationTest {
     @Autowired
     MockMvc mvc;
 
+    @Autowired
+    private UserService userService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private String toJson(Object obj) throws IOException{
+    private String toJson(Object obj) throws IOException {
         return objectMapper.writeValueAsString(obj);
-
+    }
 
     @Test
     public void whenValidInput_thenCreateUser() throws Exception{
         UserDto user = new UserDto(null, "Jan", "Drewienkowski", "jdrew3081@gmail.com");
         mvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.firstName", is("Jan")))
                 .andExpect(jsonPath("$.id", greaterThanOrEqualTo(1)));
+    }
+
+
+    @Test
+    public void givenUserInDb_whenGetUsersById_thenStatus200AndUserReturned() throws Exception {
+
+        UserDto savedUser = userService.create(new UserDto(null, "Adam", "Nowak", "adam.nowak@example.com"));
+
+
+        mvc.perform(get("/api/users/{id}", savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(savedUser.getId().intValue())))
+                .andExpect(jsonPath("$.firstName", is("Adam")))
+                .andExpect(jsonPath("$.lastName", is("Nowak")));
+    }
+
+    @Test
+    public void givenUsersInDb_whenGetUsers_thenStatus200AndListReturned() throws Exception {
+
+        userService.create(new UserDto(null, "Alicja", "Kowalska", "alicja.k@example.com"));
+        userService.create(new UserDto(null, "Piotr", "Zalewski", "piotr.z@example.com"));
+
+
+        mvc.perform(get("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].firstName", is("Alicja")))
+                .andExpect(jsonPath("$[1].lastName", is("Zalewski")));
     }
 }
