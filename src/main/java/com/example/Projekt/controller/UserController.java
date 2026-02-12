@@ -10,9 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 
-/**
- * Prosty REST controller. Zasady: cienka warstwa, deleguje logikę do serwisu (SRP).
- */
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

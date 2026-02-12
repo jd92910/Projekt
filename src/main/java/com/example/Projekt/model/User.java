@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-/**
- * Encja User - POJO zarządzane przez JPA.
- * SRP: tylko pola + metadane JPA.
- */
+
 @Entity
 @Table(name = "users")
 @Getter

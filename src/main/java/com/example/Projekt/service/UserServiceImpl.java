@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-// Można dodać walidację w oddzielnym komponencie (SRP)
         User user = UserMapper.toEntity(userDto);
         User saved = userRepository.save(user);
         return UserMapper.toDto(saved);
@@ -56,7 +55,6 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-// Update fields (could be delegated to a patch/merge util)
         existing.setFirstName(userDto.getFirstName());
         existing.setLastName(userDto.getLastName());
         existing.setEmail(userDto.getEmail());
